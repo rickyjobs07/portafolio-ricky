@@ -3,7 +3,7 @@ import React from 'react';
 const Experience = () => {
   const experiences = [
     {
-      title: 'Analista Programador',
+      title: 'Full-stack Developer',
       company: 'IDOPPRIL',
       period: '2022 - Presente',
       description: 'Desarrollo y mantenimiento de aplicaciones empresariales utilizando .NET Core y SQL Server. Implementación de nuevas funcionalidades y optimización de procesos existentes. Colaboración en la migración de sistemas legacy a arquitecturas modernas.',
@@ -22,14 +22,14 @@ const Experience = () => {
     {
       title: 'Ingeniería en Software',
       institution: 'Universidad del Caribe (UNICARIBE)',
-      period: '2019 - 2023',
+      period: '2022 - 2024',
       description: 'Formación en desarrollo de software, arquitectura de sistemas y gestión de proyectos.',
       location: 'Santo Domingo, República Dominicana'
     },
     {
-      title: 'Técnico en Desarrollo de Software',
+      title: 'Técnologo en Desarrollo de Software',
       institution: 'Instituto Tecnológico de Las Américas (ITLA)',
-      period: '2017 - 2019',
+      period: '2019 - 2022',
       description: 'Especialización en desarrollo web, bases de datos y programación orientada a objetos.',
       location: 'Santo Domingo, República Dominicana'
     }

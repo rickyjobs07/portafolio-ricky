@@ -1566,4 +1566,33 @@ section {
     height: 38px;
     font-size: 1rem;
   }
+}
+
+/* Footer styles */
+.footer {
+  background-color: var(--section-bg);
+  padding: 2rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer__container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.footer__text {
+  color: var(--light-text);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1.5rem 0;
+  }
+  
+  .footer__text {
+    font-size: 0.875rem;
+  }
 } 

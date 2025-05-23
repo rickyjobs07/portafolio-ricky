@@ -25,7 +25,7 @@ const About = () => {
             </p>
             
             <p className="about__description">
-              Con más de 2 años de experiencia en desarrollo web y backend, me especializo 
+              Con más de 4 años de experiencia en desarrollo web y backend, me especializo 
               en construir aplicaciones robustas y escalables. Mi experiencia abarca desde 
               el desarrollo de APIs RESTful hasta la implementación de interfaces de usuario 
               intuitivas, siempre buscando el equilibrio perfecto entre rendimiento y 
