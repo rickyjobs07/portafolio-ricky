@@ -3,9 +3,16 @@ import React from 'react';
 const Experience = () => {
   const experiences = [
     {
+      title: 'Analista SOA',
+      company: 'Humano Seguros',
+      period: '2025 - Presente',
+      description: 'Responsable del diseño e implementación de soluciones SOA para mejorar la integración de sistemas internos y externos. Colaboración con equipos de desarrollo para garantizar la escalabilidad y mantenibilidad de las aplicaciones. Participación en la definición de estándares y mejores prácticas para el desarrollo de servicios.',
+      location: 'Santo Domingo, República Dominicana'
+    },
+    {
       title: 'Full-stack Developer',
       company: 'IDOPPRIL',
-      period: '2022 - Presente',
+      period: '2022 - 2025',
       description: 'Desarrollo y mantenimiento de aplicaciones empresariales utilizando .NET Core y SQL Server. Implementación de nuevas funcionalidades y optimización de procesos existentes. Colaboración en la migración de sistemas legacy a arquitecturas modernas.',
       location: 'Santo Domingo, República Dominicana'
     },
