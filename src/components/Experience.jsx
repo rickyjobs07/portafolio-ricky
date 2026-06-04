@@ -7,7 +7,7 @@ const Experience = () => {
       company: 'Humano Seguros',
       period: '2025 - Presente',
       description: 'Responsable del diseño e implementación de soluciones SOA para mejorar la integración de sistemas internos y externos. Colaboración con equipos de desarrollo para garantizar la escalabilidad y mantenibilidad de las aplicaciones. Participación en la definición de estándares y mejores prácticas para el desarrollo de servicios.',
-      location: 'Santo Domingo, República Dominicana'
+      location: 'Hibrido (Santo Domingo, República Dominicana / Remoto)'
     },
     {
       title: 'Full-stack Developer',
