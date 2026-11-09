@@ -1,80 +1,35 @@
-import React from 'react';
+import { useLocale } from '../hooks/useLocale';
 
-const Experience = () => {
-  const experiences = [
-    {
-      title: 'Analista SOA',
-      company: 'Humano Seguros',
-      period: '2025 - Presente',
-      description: 'Responsable del diseño e implementación de soluciones SOA para mejorar la integración de sistemas internos y externos. Colaboración con equipos de desarrollo para garantizar la escalabilidad y mantenibilidad de las aplicaciones. Participación en la definición de estándares y mejores prácticas para el desarrollo de servicios.',
-      location: 'Hibrido (Santo Domingo, República Dominicana / Remoto)'
-    },
-    {
-      title: 'Full-stack Developer',
-      company: 'IDOPPRIL',
-      period: '2022 - 2025',
-      description: 'Desarrollo y mantenimiento de aplicaciones empresariales utilizando .NET Core y SQL Server. Implementación de nuevas funcionalidades y optimización de procesos existentes. Colaboración en la migración de sistemas legacy a arquitecturas modernas.',
-      location: 'Santo Domingo, República Dominicana'
-    },
-    {
-      title: 'Desarrollador Freelance',
-      company: 'EV Technology',
-      period: '2021 - 2022',
-      description: 'Desarrollo de soluciones web personalizadas para clientes. Implementación de APIs RESTful y bases de datos PostgreSQL. Diseño e implementación de interfaces de usuario responsivas y optimizadas.',
-      location: 'Remoto'
-    }
-  ];
-
-  const education = [
-    {
-      title: 'Ingeniería en Software',
-      institution: 'Universidad del Caribe (UNICARIBE)',
-      period: '2022 - 2024',
-      description: 'Formación en desarrollo de software, arquitectura de sistemas y gestión de proyectos.',
-      location: 'Santo Domingo, República Dominicana'
-    },
-    {
-      title: 'Técnologo en Desarrollo de Software',
-      institution: 'Instituto Tecnológico de Las Américas (ITLA)',
-      period: '2019 - 2022',
-      description: 'Especialización en desarrollo web, bases de datos y programación orientada a objetos.',
-      location: 'Santo Domingo, República Dominicana'
-    }
-  ];
-
-  const TimelineItem = ({ item, type }) => (
-    <div className="experience__item">
-      <div className="experience__content">
-        <div className="experience__header">
-          <h3 className="experience__title">{item.title}</h3>
-          <span className="experience__period">{item.period}</span>
-        </div>
-        <h4 className="experience__company">
-          {type === 'work' ? item.company : item.institution}
-        </h4>
-        <p className="experience__location">{item.location}</p>
-        <p className="experience__description">{item.description}</p>
-      </div>
-    </div>
-  );
+export default function Experience() {
+  const { t } = useLocale();
 
   return (
-    <div className="experience__container">
-      <h2 className="experience__section-title">Experiencia Laboral</h2>
-      <div className="experience__timeline">
-        {experiences.map((exp, index) => (
-          <TimelineItem key={index} item={exp} type="work" />
-        ))}
+    <section className="section" id="trajectory" aria-labelledby="trajectory-title">
+      <div className="wrap">
+        <div className="section__head reveal">
+          <p className="kicker">{t.trajectory.index}</p>
+          <h2 id="trajectory-title">{t.trajectory.title}</h2>
+          <p className="lede">{t.trajectory.lede}</p>
+        </div>
+        <ol className="timeline">
+          {t.trajectory.roles.map((role) => (
+            <li key={role.id} className="role reveal">
+              <div className="role__when">
+                <p>{role.kind === 'work' ? t.trajectory.workLabel : t.trajectory.studyLabel}</p>
+                <strong>{role.years}</strong>
+                {role.yearsNote ? <em>{role.yearsNote}</em> : null}
+              </div>
+              <div>
+                <h3>{role.title}</h3>
+                <p className="role__org">{role.org}</p>
+                <p className="role__place">{role.place}</p>
+                <p>{role.summary}</p>
+                {role.pending ? <p className="pending">{role.pending}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
-
-      <h2 className="experience__section-title">Educación</h2>
-      <div className="experience__timeline">
-        {education.map((edu, index) => (
-          <TimelineItem key={index} item={edu} type="education" />
-        ))}
-      </div>
-    </div>
+    </section>
   );
-};
-
-export default Experience; 
+}

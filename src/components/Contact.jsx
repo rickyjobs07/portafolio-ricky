@@ -1,164 +1,127 @@
-import React, { useState } from 'react';
-import emailjs from '@emailjs/browser';
+import { useState } from 'react';
+import { useLocale } from '../hooks/useLocale';
+import { contactLinks } from '../data/profile';
+import { sendWithEmailJs, submitContact, validateContact } from '../lib/contact';
 
-const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
+const EMPTY = { name: '', email: '', message: '' };
 
-  const [status, setStatus] = useState({
-    submitted: false,
-    submitting: false,
-    error: null
-  });
+export default function Contact({ sender = sendWithEmailJs }) {
+  const { t } = useLocale();
+  const [values, setValues] = useState(EMPTY);
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState('idle');
 
-  const [showToast, setShowToast] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const onChange = (event) => {
+    const { name, value } = event.target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: undefined }));
+    if (status !== 'idle') setStatus('idle');
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setStatus({ submitted: false, submitting: true, error: null });
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const nextErrors = validateContact(values);
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      setStatus('idle');
+      return;
+    }
 
-    emailjs.send(
-      'service_vxqeexu',
-      'template_s8zdoga',
-      {
-        from_name: formData.name,
-        from_email: formData.email,
-        message: formData.message,
-      },
-      'Ptn7_YLaoOgG5tiTn'
-    )
-    .then(() => {
-      setStatus({ submitted: true, submitting: false, error: null });
-      setFormData({ name: '', email: '', message: '' });
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
-    })
-    .catch(() => {
-      setStatus({ submitted: false, submitting: false, error: 'Error al enviar el mensaje. Intenta de nuevo.' });
-    });
+    setStatus('sending');
+    try {
+      await submitContact(values, sender);
+      setValues(EMPTY);
+      setErrors({});
+      setStatus('sent');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
-    <section id="contact" className="contact">
-      <div className="contact__container">
-        <h2 className="contact__title">Contacto</h2>
-        <p className="contact__subtitle">
-          ¿Tienes un proyecto en mente o quieres colaborar? ¡Hablemos sobre cómo podemos trabajar juntos!
-        </p>
-
-        <div className="contact__content">
-          <div className="contact__info">
-            <h3>Conectemos</h3>
-            <p>
-              Estoy siempre abierto a discutir nuevos proyectos, ideas creativas
-              o oportunidades para ser parte de tu visión. Ya sea que tengas una
-              pregunta o simplemente quieras saludar, ¡me encantaría saber de ti!
-            </p>
-            <div className="contact__details">
-              <div className="contact__item">
-                <i className="fas fa-envelope"></i>
-                <div>
-                  <span className="contact__label">Email:</span>
-                  <a href="mailto:rickymonterojobs07@gmail.com" className="contact__link">
-                    rickymonterojobs07@gmail.com
-                  </a>
-                </div>
-              </div>
-              <div className="contact__item">
-                <i className="fas fa-map-marker-alt"></i>
-                <div>
-                  <span className="contact__label">Ubicación:</span>
-                  <span>Santo Domingo, República Dominicana</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <form 
-            className="contact__form" 
-            onSubmit={handleSubmit}
-            noValidate
-          >
-            <div className="contact__form-group">
-              <label htmlFor="name">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Tu nombre"
-                aria-required="true"
-              />
-            </div>
-
-            <div className="contact__form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="tu@email.com"
-                aria-required="true"
-              />
-            </div>
-
-            <div className="contact__form-group">
-              <label htmlFor="message">Mensaje</label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                placeholder="¿En qué puedo ayudarte?"
-                aria-required="true"
-                rows="5"
-              ></textarea>
-            </div>
-
-            {status.error && (
-              <div className="contact__error" role="alert">
-                {status.error}
-              </div>
-            )}
-
-            {status.submitted && (
-              <div className="contact__success" role="alert">
-                ¡Gracias por tu mensaje! Te responderé lo antes posible.
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              className="contact__submit"
-              disabled={status.submitting}
-            >
-              {status.submitting ? 'Enviando...' : 'Enviar Mensaje'}
-            </button>
-          </form>
+    <section className="section section--paper" id="contact" aria-labelledby="contact-title">
+      <div className="wrap contact">
+        <div>
+          <p className="kicker">{t.contact.index}</p>
+          <h2 id="contact-title">{t.contact.title}</h2>
+          <p className="lede">{t.contact.lede}</p>
+          <ul className="contact__links">
+            <li>
+              <span>{t.contact.emailLabel}</span>
+              <a href={`mailto:${contactLinks.email}`}>{contactLinks.email}</a>
+            </li>
+            <li>
+              <span>{t.contact.githubLabel}</span>
+              <a href={contactLinks.github} target="_blank" rel="noreferrer">
+                {contactLinks.githubLabel}
+              </a>
+            </li>
+            <li>
+              <span>{t.contact.placeLabel}</span>
+              <strong>{t.contact.place}</strong>
+            </li>
+          </ul>
         </div>
+
+        <form className="form" onSubmit={onSubmit} noValidate>
+          <Field
+            id="name"
+            name="name"
+            label={t.contact.name}
+            value={values.name}
+            placeholder={t.contact.namePlaceholder}
+            error={errors.name ? t.contact.errors.name : ''}
+            autoComplete="name"
+            onChange={onChange}
+          />
+          <Field
+            id="email"
+            name="email"
+            type="email"
+            label={t.contact.email}
+            value={values.email}
+            placeholder={t.contact.emailPlaceholder}
+            error={errors.email ? t.contact.errors.email : ''}
+            autoComplete="email"
+            onChange={onChange}
+          />
+          <Field
+            id="message"
+            name="message"
+            label={t.contact.message}
+            value={values.message}
+            placeholder={t.contact.messagePlaceholder}
+            error={errors.message ? t.contact.errors.message : ''}
+            onChange={onChange}
+            multiline
+          />
+
+          {status === 'sent' ? <p className="form__ok" role="status">{t.contact.success}</p> : null}
+          {status === 'error' ? <p className="form__bad" role="alert">{t.contact.failure}</p> : null}
+
+          <button type="submit" className="btn btn--solid" disabled={status === 'sending'}>
+            {status === 'sending' ? t.contact.sending : t.contact.submit}
+          </button>
+        </form>
       </div>
-
-      {showToast && (
-        <div className="toast toast--success" role="status">
-          <span>✅ ¡Mensaje enviado correctamente!</span>
-        </div>
-      )}
     </section>
   );
-};
+}
 
-export default Contact; 
+function Field({ id, label, error, multiline, ...props }) {
+  const errorId = `${id}-error`;
+  const fieldProps = {
+    id,
+    'aria-invalid': error ? 'true' : 'false',
+    'aria-describedby': error ? errorId : undefined,
+    ...props,
+  };
+
+  return (
+    <div className={`field ${error ? 'is-invalid' : ''}`}>
+      <label htmlFor={id}>{label}</label>
+      {multiline ? <textarea rows="6" {...fieldProps} /> : <input {...fieldProps} />}
+      {error ? <p id={errorId} role="alert">{error}</p> : null}
+    </div>
+  );
+}
