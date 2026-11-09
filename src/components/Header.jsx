@@ -1,70 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useId, useState } from 'react';
+import { useLocale } from '../hooks/useLocale';
 
-const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Header({ active }) {
+  const { t, locale, setLocale } = useLocale();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const menuId = useId();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => {
+    document.body.classList.toggle('nav-lock', open);
+    return () => document.body.classList.remove('nav-lock');
+  }, [open]);
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const close = () => setOpen(false);
 
   return (
-    <header className={`header ${isScrolled ? 'header--scrolled' : ''}`}>
-      <div className="container header__container">
-        <a href="#about" className="header__logo" onClick={closeMenu}>
+    <header className={`site-header ${scrolled || open ? 'is-solid' : ''}`}>
+      <a className="skip" href="#contenido">
+        {locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+      </a>
+      <div className="wrap site-header__bar">
+        <a className="brand" href="#top" onClick={close}>
           RM
+          <span className="sr-only">. {t.brand}</span>
         </a>
 
-        <button 
-          className={`header__menu-btn ${isMenuOpen ? 'active' : ''}`}
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav className={`header__nav ${isMenuOpen ? 'active' : ''}`}>
-          <ul className="header__nav-list">
-            <li>
-              <a href="#about" onClick={closeMenu}>
-                Sobre mí
-              </a>
-            </li>
-            <li>
-              <a href="#experience" onClick={closeMenu}>
-                Experiencia
-              </a>
-            </li>
-            <li>
-              <a href="#projects" onClick={closeMenu}>
-                Proyectos
-              </a>
-            </li>
-            <li>
-              <a href="#contact" onClick={closeMenu}>
-                Contacto
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <div className="header-end">
+          <nav id={menuId} className={`nav ${open ? 'is-open' : ''}`} aria-label="Principal">
+            <ul>
+              {t.nav.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className={active === item.id ? 'is-active' : undefined}
+                    aria-current={active === item.id ? 'true' : undefined}
+                    onClick={close}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="lang" role="group" aria-label={t.lang.label}>
+            <button type="button" aria-pressed={locale === 'es'} onClick={() => setLocale('es')}>
+              {t.lang.es}
+            </button>
+            <button type="button" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>
+              {t.lang.en}
+            </button>
+          </div>
+          <button
+            type="button"
+            className={`menu-btn ${open ? 'is-open' : ''}`}
+            aria-expanded={open}
+            aria-controls={menuId}
+            aria-label={open ? t.menu.close : t.menu.open}
+            onClick={() => setOpen((value) => !value)}
+          >
+            <span className="menu-btn__lines" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </header>
   );
-};
-
-export default Header; 
+}

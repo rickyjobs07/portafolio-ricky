@@ -1,46 +1,45 @@
-import React from 'react';
+import { useMemo } from 'react';
+import { SECTION_IDS } from './data/profile';
+import { LocaleProvider } from './context/Locale';
+import { useActiveSection } from './hooks/useActiveSection';
+import { useReveal } from './hooks/useReveal';
 import Header from './components/Header';
+import Hero from './components/Hero';
 import About from './components/About';
+import Expertise from './components/Expertise';
+import Work from './components/Work';
 import Experience from './components/Experience';
-import Projects from './components/Projects';
+import Lab from './components/Lab';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import './styles/main.css';
 
-const App = () => {
+function Shell() {
+  const sectionIds = useMemo(() => SECTION_IDS, []);
+  const active = useActiveSection(sectionIds);
+  useReveal();
+
   return (
-    <div className="app">
-      <Header />
-      
-      <main>
-        <section id="about" className="about">
-          <div className="container">
-            <About />
-          </div>
-        </section>
-
-        <section id="experience" className="experience">
-          <div className="container">
-            <Experience />
-          </div>
-        </section>
-
-        <section id="projects" className="projects">
-          <div className="container">
-            <Projects />
-          </div>
-        </section>
-
-        <section id="contact" className="contact">
-          <div className="container">
-            <Contact />
-          </div>
-        </section>
+    <>
+      <Header active={active} />
+      <main id="contenido">
+        <Hero />
+        <About />
+        <Expertise />
+        <Work />
+        <Experience />
+        <Lab />
+        <Contact />
       </main>
-
       <Footer />
-    </div>
+    </>
   );
-};
+}
 
-export default App;
+export default function App() {
+  return (
+    <LocaleProvider>
+      <Shell />
+    </LocaleProvider>
+  );
+}
